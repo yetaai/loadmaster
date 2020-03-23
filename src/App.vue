@@ -1,17 +1,22 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+<!--    <img alt="Vue logo" src="./assets/logo.png">-->
+    <Load :msg="msg"></Load>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Load from './components/Load.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Load
+  },
+  data: () => {
+    return {
+      msg: "Loading a file to redmine",
+    }
   }
 }
 </script>
