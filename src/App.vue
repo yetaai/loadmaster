@@ -15,7 +15,7 @@ export default {
   },
   data: () => {
     return {
-      msg: "Loading a file to redmine",
+      msg: "Load master",
     }
   }
 }

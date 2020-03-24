@@ -1,44 +1,73 @@
 <template>
   <div class="load">
     <h1 :style="msgstyle">{{ vmmsg }}</h1>
-    <div>
-      <span :style="genmapclass" @click.self="falseMapSource">New IO Map</span><span :style="hasmapclass" @click.self="trueMapSource">Use my own IO Map</span>
+    <div class="paras">
+      <div class="para1" :style="genmapclass" @click.self="falseMapSource">New IO Map</div>
+      <div class="para2" :style="hasmapclass" @click.self="trueMapSource">Use my own IO Map</div>
+      <div class="para3"> </div>
     </div>
-    <div><label for="posturl">Post URL:</label><input id="posturl" type="text" v-model="posturl"></div>
-    <div v-if="!hasIoMap">
-      <label for="outscheme">Your output scheme: </label>
-      <select id="outscheme" @change="outColSetSelected" v-model="outColSet">
-        <option value=""></option>
-        <option v-for="(aset,asetid) in outColSets" :key="asetid" :value="aset">{{aset.name}}</option>
-      </select>
+    <div class="paras">
+      <div class="para1"><label for="posturl">Post URL:</label></div>
+      <div class="para2"><input id="posturl" type="text" v-model="posturl"></div>
+      <div class="para3"> </div>
     </div>
-    <div>
-      <label for="inputfile">Input file: </label>
-      <input id="inputfile" type="file" @change="genInColSet">
-    </div>
-    <div v-if="hasIoMap">
-      <label for="mapfile">Your map file: </label>
-      <input id="mapfile" type="file" @change="setIoMapFile">
-      <input type="button" @click.prevent.stop="reloadIoMapFile" v-if="ioMapFile" value="Reload the map">
-<!--      <input type="button" value="select iomap" @click.self="selectIoMap">-->
+    <div class="paras" v-if="!hasIoMap">
+      <div class="para1">
+        <label for="outscheme">Your output scheme: </label>
+      </div>
+      <div class="para2">
+        <select id="outscheme" @change="outColSetSelected" v-model="outColSet">
+          <option value=""></option>
+          <option v-for="(aset,asetid) in outColSets" :key="asetid" :value="aset">{{aset.name}}</option>
+        </select>
+      </div>
+      <div class="para3"> </div>
     </div>
 
-    <div>
-      <div>
+    <div class="paras">
+      <div class="para1">
+        <label for="inputfile">Input file: </label>
+      </div>
+      <div class="para2">
+        <input id="inputfile" type="file" @change="genInColSet">
+      </div>
+      <div class="para3"> </div>
+    </div>
+    <div class="paras" v-if="hasIoMap">
+      <div class="para1">
+        <label for="mapfile">Your map file: </label>
+      </div>
+      <div class="para2">
+        <input id="mapfile" type="file" @change="setIoMapFile">
+      </div>
+      <div class="para3">
+        <input type="button" @click.prevent.stop="reloadIoMapFile" v-if="ioMapFile" value="Reload the map">
+      </div>
+    </div>
+<!--      <input type="button" value="select iomap" @click.self="selectIoMap">-->
+    <div class="paras">
+      <div class="para1">
         <input type="button" value="Reset Map" v-on:click="resetMap">
-        <input type="button" value="Help me map" v-on:click="helpMeMap" v-if="inColSet && Object.keys(inColSet).length > 1">
+      </div>
+      <div class="para2">
+        <input type="button" value="Help me map" v-on:click="helpMeMap" :disabled="helpmedisabled" :style="helpmestyle">
+      </div>
+      <div class="para3">
         <input type="button" value="Save map" v-on:click="saveIoMap">
       </div>
-      <div>
+    </div>
+    <div class="paras">
+      <div class="para1">
         <input type="button" value="Load" v-on:click="loadFile">
       </div>
-      <div>
+    </div>
+
         <div class="mapcontainer">
           <div class="incolset" v-if="inColSet">
             <div v-for="(inCol, inColId) in Object.values(inColSet)" :key="inColId">
               <div class="incolrow"  @click.prevent.stop="inColSelect(inCol)">
-                <div style="border: 1px solid #42b983; flex-basis: 15em" :style="inCol.style">{{inCol.name}}</div>
-                <div style="border: 1px solid #42b983; flex-basis: 3em" :style="inCol.style">{{inCol.colnum}}</div>
+                <div style="border: 1px solid #42b983; flex: 0 0 100px" :style="inCol.style">{{inCol.name}}</div>
+                <div style="border: 1px solid #42b983; flex: 0 0 20px" :style="inCol.style">{{inCol.colnum}}</div>
 <!--                <div>{{inCol.style}}</div>-->
               </div>
             </div>
@@ -47,10 +76,10 @@
             <div v-for="outCol in outColSet.cols" :key="outCol.name">
               <div class="incolrow">
 <!--                <div>{{ outColView[outCol.name].selected ? "X" : " "}}</div>-->
-                <div style="border: 0.5px solid #003383; flex-basis: 5em" @click.self="outColClear(outCol)">{{outCol.inCol ? "Clear": ""}}</div>
-                <div style="border: 1px solid #003383; flex-basis: 15em" :style="outColView[outCol.name].style"
+                <div style="border: 0.5px solid #003383; flex: 0 0 50px;" @click.self="outColClear(outCol)">{{outCol.inCol ? "Clear": " "}}</div>
+                <div style="border: 1px solid #003383; flex: 0 0 150px;" :style="outColView[outCol.name].style"
                      @click.self="outColSelect(outCol)">{{outCol.name}}</div>
-                <div style="border: 1px solid #003383; flex-basis: 8em" :style="outColView[outCol.name].style"
+                <div style="border: 1px solid #003383; flex: 0 0 120px;" :style="outColView[outCol.name].style"
                      @click.self="outColSelect(outCol)">{{outCol.inCol? outCol.inCol.name : " "}}</div>
                 <!--              <div>{{outCol.path}}</div>-->
                 <!--              <div>{{outCol.type}}</div>-->
@@ -58,9 +87,6 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
-
     <div :class="loadProgressStyle"><p v-for="(line, iline) in loadProgress" :key="iline">{{line}}</p></div>
   </div>
 </template>
@@ -114,8 +140,25 @@ export default {
       let vm = this
       return {
         backgroundColor: vm.hasIoMap ? '#ffffff': '#8f8f8f',
-        border: '1px solid red',
-        marginRight: '1em'
+        border: '1px solid red'
+      }
+    },
+    helpmedisabled: function () {
+      let vm = this
+      if (vm.inColSet && Object.keys(vm.inColSet).length > 1 && vm.outColSet && vm.outColSet.cols) {
+        return false
+      } else {
+        return true
+      }
+    },
+    helpmestyle: function () {
+      let vm = this
+      if (vm.inColSet && Object.keys(vm.inColSet).length > 1 && vm.outColSet && vm.outColSet.cols) {
+        return {
+        }
+      } else {
+        return {
+        }
       }
     }
   },
@@ -271,7 +314,6 @@ export default {
           let inVal = row[outCol.inCol.colnum]
           let head = issueRoot
           let oPath = outCol.path || [{name: outCol.name}]
-          if (outCol.name != 'Epic review') continue
           for (let i in oPath) {
             let pathnode = oPath[i]
             let childNodes = globals.getChildEleByTag(head, pathnode.name)
@@ -323,22 +365,13 @@ export default {
               if (i == oPath.length - 1) {
                 txtNode = anIssue.createTextNode(inVal)
                 head.appendChild(txtNode)
-                // let otype = outCol.type || "string"
-                // if (otype == "string") {
-                //   head.innerText = '"' + inVal + '"'
-                // } else if (otype== "number") {
-                //   head.innerText = inVal
-                // } else {
-                //   vm.premsg = "Abandoned processing due to error. outCol definition: " + JSON.stringify(outCol) + ". Reason: unknown data type: " + otype
-                //   vm.msgstyle = globals.errStyle
-                // }
               }
             }
           }
         }
       }
       console.log("=====================: " + new XMLSerializer().serializeToString(anIssue))
-      axios.post(vm.posturl, anIssue).then(function () {
+      axios.post(vm.posturl,  new XMLSerializer().serializeToString(anIssue), {headers: {'Content-Type': 'application/xml'}}).then(function () {
         vm.loadedRows = vm.loadedRows + 1
         vm.loadProgress.push(row[1] + " is loaded. " + vm.loadedRows.toString() + "/" + vm.totalRows.toString() + "processed.")
       }).catch(function(e) {
@@ -453,16 +486,18 @@ export default {
     },
     helpMeMap() {
       let vm = this
-      for (let inCol of Object.values(vm.inColSet)) {
-        inCol.style = globals.styleOutColUnselected
-      }
-      for (let outCol of vm.outColSet.cols) {
-        if (vm.inColSet[outCol.name]) {
-          outCol.inCol = vm.inColSet[outCol.name]
-          vm.inColSet[outCol.name].style = globals.styleOutColAssigned
+      if (vm.inColSet && Object.keys(vm.inColSet).length > 1 && vm.outColSet && vm.outColSet.cols){
+        for (let inCol of Object.values(vm.inColSet)) {
+          inCol.style = globals.styleOutColUnselected
         }
+        for (let outCol of vm.outColSet.cols) {
+          if (vm.inColSet[outCol.name]) {
+            outCol.inCol = vm.inColSet[outCol.name]
+            vm.inColSet[outCol.name].style = globals.styleOutColAssigned
+          }
+        }
+        vm.$forceUpdate()
       }
-      vm.$forceUpdate()
     },
     resetMap() {
       let vm = this
@@ -504,11 +539,14 @@ a {
 }
   .incolrow{
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     margin: 0%;
     align-content: center;
-    align-items: stretch;
-    justify-content: stretch;
+    /*align-items: stretch;*/
+    /*justify-content: stretch;*/
+  }
+  .mapcontainer{
+    clear: both;
   }
   .incolset {
     display: block;
@@ -519,5 +557,22 @@ a {
     display: block;
     float: left;
     margin-left: 1em;
+  }
+  .paras {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 0 auto;
+    align-content: center;
+    align-items: stretch;
+    justify-content: stretch;
+  }
+  .para1 {
+    flex-basis: 28%
+  }
+  .para2 {
+    flex-basis: 40%
+  }
+  .para3 {
+    flex-basis: 25%;
   }
 </style>
