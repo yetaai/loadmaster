@@ -10,7 +10,7 @@
   "dependencies": {
     "blob": "^0.1.0",
     "core-js": "^3.6.4",
-    "papaparse": "^5.1.1",
+    "papaparse": "^5.2.0",
     "streamsaver": "^2.0.3",
     "vue": "^2.6.11",
     "web-streams-polyfill": "^2.1.0",
